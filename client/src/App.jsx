@@ -27,7 +27,7 @@ function App() {
     fetchStudents();
   }, []);
 
-  // Hàm xử lý gửi dữ liệu sinh viên mới lên Backend API (Câu 49)
+  // 1. Hàm thêm sinh viên (POST)
   const handleAddStudent = (e) => {
     e.preventDefault();
 
@@ -38,7 +38,6 @@ function App() {
 
     const newStudent = { studentId, name, email };
 
-    // Gọi API POST /api/students
     fetch('/api/students', {
       method: 'POST',
       headers: {
@@ -48,9 +47,7 @@ function App() {
     })
       .then((res) => res.json())
       .then(() => {
-        // Tải lại danh sách sinh viên sau khi thêm thành công
         fetchStudents();
-        // Làm sạch các ô input
         setStudentId('');
         setName('');
         setEmail('');
@@ -60,11 +57,50 @@ function App() {
       });
   };
 
+  // 2. Hàm sửa tên sinh viên (PUT) - Câu 61
+  const handleUpdate = async (id, currentName) => {
+    const newName = prompt('Nhập tên mới cho sinh viên:', currentName);
+    if (!newName || newName === currentName) return;
+
+    try {
+      const res = await fetch(`/api/students/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: newName }),
+      });
+      if (res.ok) {
+        fetchStudents();
+      } else {
+        alert('Cập nhật thất bại!');
+      }
+    } catch (err) {
+      console.error('Lỗi cập nhật:', err);
+    }
+  };
+
+  // 3. Hàm xóa sinh viên (DELETE)
+  const handleDelete = async (id) => {
+    if (!window.confirm('Bạn có chắc chắn muốn xóa sinh viên này?')) return;
+
+    try {
+      const res = await fetch(`/api/students/${id}`, {
+        method: 'DELETE',
+      });
+      if (res.ok) {
+        fetchStudents();
+      } else {
+        alert('Xóa thất bại!');
+      }
+    } catch (err) {
+      console.error('Lỗi khi xóa:', err);
+    }
+  };
+
   return (
     <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
       <h1>Quản Lý Sinh Viên</h1>
 
-      {/* Form nhập dữ liệu và Nút Thêm Sinh Viên */}
+      {/* Form nhập dữ liệu */}
       <form onSubmit={handleAddStudent} style={{ marginBottom: '20px', padding: '15px', border: '1px solid #ccc', borderRadius: '5px' }}>
         <h3 style={{ marginTop: 0 }}>Thêm Sinh Viên Mới</h3>
         <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', alignItems: 'center' }}>
@@ -115,6 +151,7 @@ function App() {
               <th>Mã Sinh Viên</th>
               <th>Họ và Tên</th>
               <th>Email</th>
+              <th>Thao Tác</th>
             </tr>
           </thead>
           <tbody>
@@ -124,11 +161,40 @@ function App() {
                   <td>{sv.studentId}</td>
                   <td>{sv.name}</td>
                   <td>{sv.email}</td>
+                  <td style={{ textAlign: 'center' }}>
+                    <button
+                      onClick={() => handleUpdate(sv._id, sv.name)}
+                      style={{
+                        marginRight: '8px',
+                        padding: '6px 12px',
+                        backgroundColor: '#ffc107',
+                        color: '#000',
+                        border: 'none',
+                        borderRadius: '4px',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      Sửa
+                    </button>
+                    <button
+                      onClick={() => handleDelete(sv._id)}
+                      style={{
+                        padding: '6px 12px',
+                        backgroundColor: '#dc3545',
+                        color: '#fff',
+                        border: 'none',
+                        borderRadius: '4px',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      Xóa
+                    </button>
+                  </td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan="3" style={{ textAlign: 'center' }}>Chưa có sinh viên nào.</td>
+                <td colSpan="4" style={{ textAlign: 'center' }}>Chưa có sinh viên nào.</td>
               </tr>
             )}
           </tbody>

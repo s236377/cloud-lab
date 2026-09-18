@@ -21,6 +21,11 @@ const studentSchema = new mongoose.Schema({
 
 const Student = mongoose.model('Student', studentSchema);
 
+// 0. API GET: Chào mừng /api/hello (Câu 45)
+app.get('/api/hello', (req, res) => {
+  res.json({ message: "Hello from MERN Backend Docker!" });
+});
+
 // 1. API GET: Lấy danh sách sinh viên
 app.get('/api/students', async (req, res) => {
   try {

@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./mern-demo
+    ports:
+      - "5000:5000"
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
+    environment:
+      PORT: 5000
+      MONGODB_URI: mongodb://admin:123@ac-papciuq-shard-00-00.j7kwbru.mongodb.net:27017,ac-papciuq-shard-00-01.j7kwbru.mongodb.net:27017,ac-papciuq-shard-00-02.j7kwbru.mongodb.net:27017/cloud_lab?ssl=true&replicaSet=atlas-9hcuoy-shard-0&authSource=admin&appName=Cluster0
+
+  frontend:
+    build: ./client
+    ports:
+      - "3000:4173"
+    depends_on:
+      - backend

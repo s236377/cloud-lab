@@ -8,7 +8,7 @@ export default defineConfig({
     proxy: {
       '/api': {
         target: 'http://backend:5000',
-        changeOrigin: true,
+        changeOrigin: true
       }
     }
   },
@@ -18,7 +18,7 @@ export default defineConfig({
     proxy: {
       '/api': {
         target: 'http://backend:5000',
-        changeOrigin: true,
+        changeOrigin: true
       }
     }
   }

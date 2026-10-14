@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import './App.css';
 
 function App() {
+  const API_URL = import.meta.env.VITE_API_URL || 'https://mern-backend-s236377.onrender.com';
   const [students, setStudents] = useState([]);
   const [studentId, setStudentId] = useState('');
   const [name, setName] = useState('');
@@ -10,7 +11,7 @@ function App() {
 
   // 1. Tải danh sách sinh viên từ Backend (Lab 78)
   const fetchStudents = () => {
-    fetch('/api/students')
+    fetch(`${API_URL}/api/students`)
       .then((res) => res.json())
       .then((data) => setStudents(data))
       .catch((err) => console.error('Lỗi lấy danh sách sinh viên:', err));
@@ -20,7 +21,7 @@ function App() {
     fetchStudents();
   }, []);
 
-  // 2. Xử lý thêm mới hoặc cập nhật sinh viên (Lab 79)
+// 2. Xử lý thêm mới hoặc cập nhật sinh viên (Lab 79)
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -32,8 +33,8 @@ function App() {
     const studentData = { studentId, name, email };
 
     if (editingId) {
-      // Cập nhật/sửa sinh viên (PUT)
-      fetch(`/api/students/${editingId}`, {
+      // Cập nhật/sửa sinh viên (PUT) - Đã thêm /${editingId}
+      fetch(`${API_URL}/api/students/${editingId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(studentData),
@@ -46,7 +47,7 @@ function App() {
         .catch((err) => console.error('Lỗi khi sửa:', err));
     } else {
       // Thêm mới sinh viên (POST)
-      fetch('/api/students', {
+      fetch(`${API_URL}/api/students`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(studentData),
@@ -63,14 +64,14 @@ function App() {
   // 3. Xử lý xóa sinh viên
   const handleDelete = (id) => {
     if (window.confirm('Bạn có chắc chắn muốn xóa sinh viên này?')) {
-      fetch(`/api/students/${id}`, {
+      // Xóa sinh viên (DELETE) - Đã thêm /${id}
+      fetch(`${API_URL}/api/students/${id}`, {
         method: 'DELETE',
       })
         .then(() => fetchStudents())
         .catch((err) => console.error('Lỗi khi xóa:', err));
     }
   };
-
   // 4. Chọn sinh viên để sửa
   const handleEdit = (student) => {
     setEditingId(student._id);
@@ -89,7 +90,31 @@ function App() {
 
   return (
     <div style={{ padding: '20px', maxWidth: '800px', margin: '0 auto', color: '#fff' }}>
-      <h1 style={{ textAlign: 'center' }}>Quản Lý Sinh Viên - Phiên Bản 2.0</h1>
+      <h1 style={{
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  gap: '12px',
+  fontSize: '2rem',
+  fontWeight: 'bold',
+  color: '#ffffff',
+  margin: '24px 0 16px 0'
+}}>
+  Quản Lý Sinh Viên
+  <span style={{
+    background: 'linear-gradient(135deg, #007bff, #00d2ff)',
+    color: '#ffffff',
+    fontSize: '0.85rem',
+    padding: '4px 12px',
+    borderRadius: '20px',
+    fontWeight: '600',
+    letterSpacing: '1px',
+    boxShadow: '0 0 12px rgba(0, 123, 255, 0.4)',
+    textTransform: 'uppercase'
+  }}>
+    v2.0
+  </span>
+</h1>
 
       {/* Form Thêm / Sửa Sinh Viên */}
       <div style={{ border: '1px solid #444', padding: '20px', borderRadius: '8px', marginBottom: '20px' }}>

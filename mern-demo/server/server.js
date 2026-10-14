@@ -4,7 +4,25 @@ const mongoose = require('mongoose');
 require('dotenv').config();
 
 const app = express();
-app.use(cors());
+
+// Cấu hình CORS linh hoạt cho Production (Câu 58)
+const allowedOrigins = [
+  process.env.CLIENT_URL,
+  'http://localhost:5173',
+  'http://localhost:3000'
+];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin) || process.env.NODE_ENV !== 'production') {
+      callback(null, true);
+    } else {
+      callback(null, true);
+    }
+  },
+  credentials: true
+}));
+
 app.use(express.json());
 
 // Kết nối tới MongoDB Atlas qua MONGODB_URI trong file .env
@@ -48,7 +66,7 @@ app.post('/api/students', async (req, res) => {
   }
 });
 
-// 3. API PUT: Cập nhật thông tin sinh viên theo ID (Câu 61)
+// 3. API PUT: Cập nhật thông tin sinh viên theo ID
 app.put('/api/students/:id', async (req, res) => {
   try {
     const updatedStudent = await Student.findByIdAndUpdate(
